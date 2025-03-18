@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lucy - Created by Rishab</title>
+  <title>Lucy - Human AI Chat</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <!-- Background Music -->
-  <audio id="backgroundMusic" src="https://www.chosic.com/wp-content/uploads/2021/08/Relaxing-Ambient-Music.mp3" autoplay loop></audio>
 
-  <!-- Lucy Section -->
+<body>
+  <audio autoplay loop id="backgroundMusic">
+    <source src="background-music.mp3" type="audio/mp3" />
+  </audio>
+
   <div class="container">
-    <div id="avatar-container"></div>
-    <div class="chat">
-      <h1>Hi, I'm Lucy! Created by Rishab. 👋</h1>
-      <div class="chat-box">
-        <input type="text" id="userInput" placeholder="Ask me anything..." />
-        <button onclick="askLucy()">Send</button>
-        <button onclick="startVoiceRecognition()">🎙️ Speak</button>
-      </div>
-      <p id="response">Lucy: Hello! How can I help you today?</p>
+    <canvas id="lucyCanvas"></canvas>
+    <div class="chatbox">
+      <div class="messages" id="messages"></div>
+      <input type="text" id="userInput" placeholder="Ask Lucy anything..." />
+      <button onclick="sendMessage()">Send</button>
+      <button onclick="startVoiceRecognition()">🎙️ Voice</button>
     </div>
   </div>
 
-  <!-- Include Three.js and Custom Script -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
