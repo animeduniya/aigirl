@@ -3,29 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Way to Study - AI Girl by Rishab</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <title>Meet Lucy - Created by Rishab</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <audio id="backgroundMusic" src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" loop autoplay></audio>
+  <!-- Background Music -->
+  <audio id="backgroundMusic" src="https://www.chosic.com/wp-content/uploads/2021/08/Relaxing-Ambient-Music.mp3" autoplay loop></audio>
 
+  <!-- Lucy Section -->
   <div class="container">
     <div id="avatar-container"></div>
     <div class="chat">
-      <h1>Hi, I'm AI Girl 👋</h1>
-      <button onclick="startVoiceRecognition()"><i class="fa-solid fa-microphone"></i> Ask Me Anything</button>
-      <p id="userSpeech">🎤 Your voice will appear here...</p>
-      <p id="response">💬 My response will appear here...</p>
-    </div>
-    <div class="controls">
-      <h3>🧑‍💻 Customize Avatar</h3>
-      <label>Skin Tone: <input type="range" min="0" max="5" id="skinToneSlider" /></label>
-      <label>Hair Color: <input type="color" id="hairColorPicker" /></label>
+      <h1>Hi, I'm Lucy! Created by Rishab. 👋</h1>
+      <button onclick="startVoiceRecognition()">🎙️ Ask Me Anything</button>
+      <p id="userSpeech">You: <span>Waiting for your question...</span></p>
+      <p id="response">Lucy: <span>I'm here to help you!</span></p>
     </div>
   </div>
 
-  <!-- Three.js and GLTFLoader -->
+  <!-- Include Three.js and Custom Script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
   <script src="script.js"></script>
