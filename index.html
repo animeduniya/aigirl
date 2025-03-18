@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meet Lucy - Created by Rishab</title>
+  <title>Lucy - Created by Rishab</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -15,9 +15,12 @@
     <div id="avatar-container"></div>
     <div class="chat">
       <h1>Hi, I'm Lucy! Created by Rishab. 👋</h1>
-      <button onclick="startVoiceRecognition()">🎙️ Ask Me Anything</button>
-      <p id="userSpeech">You: <span>Waiting for your question...</span></p>
-      <p id="response">Lucy: <span>I'm here to help you!</span></p>
+      <div class="chat-box">
+        <input type="text" id="userInput" placeholder="Ask me anything..." />
+        <button onclick="askLucy()">Send</button>
+        <button onclick="startVoiceRecognition()">🎙️ Speak</button>
+      </div>
+      <p id="response">Lucy: Hello! How can I help you today?</p>
     </div>
   </div>
 
