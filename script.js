@@ -1,80 +1,102 @@
-let scene, camera, renderer, model;
-const container = document.getElementById('avatar-container');
+// === Background Music ===
+const music = document.getElementById('backgroundMusic');
 
-// Initialize 3D Model
-function init3D() {
-  scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-  camera.position.set(0, 1.5, 3);
+// === Chat Logic ===
+const messagesDiv = document.getElementById('messages');
+const inputField = document.getElementById('userInput');
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(500, 500);
-  container.appendChild(renderer.domElement);
+// Memory Storage
+const memory = JSON.parse(localStorage.getItem('lucyMemory')) || {};
 
-  const light = new THREE.AmbientLight(0xffffff, 1.2);
-  scene.add(light);
+function sendMessage() {
+  const userMessage = inputField.value.trim();
+  if (!userMessage) return;
 
-  const loader = new THREE.GLTFLoader();
-  loader.load('https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf', (gltf) => {
-    model = gltf.scene;
-    scene.add(model);
-    animate();
-  });
+  appendMessage('You: ' + userMessage);
+  inputField.value = '';
+
+  const lucyResponse = generateResponse(userMessage);
+  appendMessage('Lucy: ' + lucyResponse);
+  speak(lucyResponse);
 }
 
-function animate() {
-  requestAnimationFrame(animate);
-  if (model) {
-    model.rotation.y += 0.002;
+function appendMessage(text) {
+  const msg = document.createElement('p');
+  msg.textContent = text;
+  messagesDiv.appendChild(msg);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// === AI Response Logic ===
+function generateResponse(question) {
+  // Simple memory-based response
+  if (question.toLowerCase().includes('my name')) {
+    if (!memory.name) {
+      memory.name = prompt("What's your name?");
+      localStorage.setItem('lucyMemory', JSON.stringify(memory));
+      return `Nice to meet you, ${memory.name}!`;
+    }
+    return `Your name is ${memory.name}!`;
   }
-  renderer.render(scene, camera);
+
+  // Example Logic
+  const responses = {
+    "hello": "Hi there! How can I assist you today?",
+    "how are you": "I'm feeling great! How about you?",
+    "who created you": "I was created by Rishab!",
+    "what's your name": "I'm Lucy, your AI assistant!",
+    "bye": "Goodbye! See you soon!"
+  };
+
+  for (const key in responses) {
+    if (question.toLowerCase().includes(key)) {
+      return responses[key];
+    }
+  }
+
+  return "Sorry, I couldn't find an answer. Try a different question.";
 }
 
-// Voice Recognition
-const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.lang = 'en-US';
-
+// === Voice Recognition ===
 function startVoiceRecognition() {
+  const recognition = new window.SpeechRecognition();
+  recognition.onresult = (event) => {
+    const voiceText = event.results[0][0].transcript;
+    inputField.value = voiceText;
+    sendMessage();
+  };
   recognition.start();
 }
 
-recognition.onresult = function (event) {
-  const question = event.results[0][0].transcript;
-  document.getElementById("userInput").value = question;
-  askLucy();
-};
-
-// AI Logic with JSON-based Responses
-const responses = {
-  "hello": "Hi! How can I assist you today?",
-  "who are you": "I'm Lucy, created by Rishab.",
-  "how are you": "I'm just a virtual assistant, but I'm feeling great!",
-  "bye": "Goodbye! Have a great day!",
-  "creator": "I was created by Rishab, a talented developer!"
-};
-
-function askLucy() {
-  const question = document.getElementById("userInput").value.toLowerCase();
-  const responseElement = document.getElementById("response");
-  
-  if (responses[question]) {
-    responseElement.innerText = `Lucy: ${responses[question]}`;
-    speak(responseElement.innerText);
-  } else {
-    responseElement.innerText = `Lucy: Sorry, I couldn't find an answer. Try a different question.`;
-    speak(responseElement.innerText);
-  }
-}
-
-// Voice Response
+// === Speech Output ===
 function speak(text) {
-  const synth = window.speechSynthesis;
-  const utterance = new SpeechSynthesisUtterance(text);
-  synth.speak(utterance);
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.lang = 'en-US';
+  speech.pitch = 1.2;
+  speech.rate = 1;
+  window.speechSynthesis.speak(speech);
 }
 
-// Background Music Control
-const bgMusic = document.getElementById('backgroundMusic');
-bgMusic.volume = 0.2;
+// === 3D Model Rendering ===
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('lucyCanvas') });
 
-init3D();
+renderer.setSize(window.innerWidth * 0.65, window.innerHeight);
+camera.position.set(0, 1.6, 3);
+
+const light = new THREE.DirectionalLight(0xffffff, 2);
+light.position.set(5, 5, 5);
+scene.add(light);
+
+const loader = new THREE.GLTFLoader();
+loader.load('model.glb', (gltf) => {
+  const model = gltf.scene;
+  scene.add(model);
+  animate();
+});
+
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
