@@ -5,9 +5,20 @@ const music = document.getElementById('backgroundMusic');
 const messagesDiv = document.getElementById('messages');
 const inputField = document.getElementById('userInput');
 
-// Memory Storage
+// AI Emotions & Memory
+let mood = 'neutral';
 const memory = JSON.parse(localStorage.getItem('lucyMemory')) || {};
 
+// === Append Chat Messages ===
+function appendMessage(text, isLucy = false) {
+  const msg = document.createElement('p');
+  msg.textContent = text;
+  msg.style.color = isLucy ? '#007bff' : '#ffffff';
+  messagesDiv.appendChild(msg);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// === Handle User Messages ===
 function sendMessage() {
   const userMessage = inputField.value.trim();
   if (!userMessage) return;
@@ -16,45 +27,49 @@ function sendMessage() {
   inputField.value = '';
 
   const lucyResponse = generateResponse(userMessage);
-  appendMessage('Lucy: ' + lucyResponse);
+  appendMessage('Lucy: ' + lucyResponse, true);
   speak(lucyResponse);
 }
 
-function appendMessage(text) {
-  const msg = document.createElement('p');
-  msg.textContent = text;
-  messagesDiv.appendChild(msg);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-// === AI Response Logic ===
+// === AI Knowledge Base ===
 function generateResponse(question) {
-  // Simple memory-based response
+  const responses = {
+    "hello": "Hi there! How can I help you today?",
+    "how are you": `I'm feeling ${mood}, thank you for asking.`,
+    "who created you": "I was created by Rishab!",
+    "what's your name": "I'm Lucy, your AI friend.",
+    "bye": "Goodbye! Take care!",
+  };
+
+  // Memory Check
   if (question.toLowerCase().includes('my name')) {
     if (!memory.name) {
       memory.name = prompt("What's your name?");
       localStorage.setItem('lucyMemory', JSON.stringify(memory));
       return `Nice to meet you, ${memory.name}!`;
     }
-    return `Your name is ${memory.name}!`;
+    return `Your name is ${memory.name}.`;
   }
 
-  // Example Logic
-  const responses = {
-    "hello": "Hi there! How can I assist you today?",
-    "how are you": "I'm feeling great! How about you?",
-    "who created you": "I was created by Rishab!",
-    "what's your name": "I'm Lucy, your AI assistant!",
-    "bye": "Goodbye! See you soon!"
-  };
+  // Mood Check
+  if (question.toLowerCase().includes('sad')) {
+    mood = 'sad';
+    return "I'm sorry you're feeling that way. I'm here to listen.";
+  }
+  if (question.toLowerCase().includes('happy')) {
+    mood = 'happy';
+    return "That's wonderful! I'm happy for you!";
+  }
 
+  // Provide answers
   for (const key in responses) {
     if (question.toLowerCase().includes(key)) {
       return responses[key];
     }
   }
 
-  return "Sorry, I couldn't find an answer. Try a different question.";
+  // No Match
+  return "I'm not sure about that. Maybe you can try a different question!";
 }
 
 // === Voice Recognition ===
@@ -68,12 +83,10 @@ function startVoiceRecognition() {
   recognition.start();
 }
 
-// === Speech Output ===
+// === Text to Speech ===
 function speak(text) {
   const speech = new SpeechSynthesisUtterance(text);
   speech.lang = 'en-US';
-  speech.pitch = 1.2;
-  speech.rate = 1;
   window.speechSynthesis.speak(speech);
 }
 
@@ -89,6 +102,7 @@ const light = new THREE.DirectionalLight(0xffffff, 2);
 light.position.set(5, 5, 5);
 scene.add(light);
 
+// Load 3D Model
 const loader = new THREE.GLTFLoader();
 loader.load('model.glb', (gltf) => {
   const model = gltf.scene;
