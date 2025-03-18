@@ -9,13 +9,18 @@
 </head>
 
 <body>
+  <!-- Background Music -->
   <audio autoplay loop id="backgroundMusic">
     <source src="background-music.mp3" type="audio/mp3" />
   </audio>
 
   <div class="container">
+    <!-- 3D Lucy Section -->
     <canvas id="lucyCanvas"></canvas>
+
+    <!-- Chatbox Section -->
     <div class="chatbox">
+      <h1>Chat with Lucy</h1>
       <div class="messages" id="messages"></div>
       <input type="text" id="userInput" placeholder="Ask Lucy anything..." />
       <button onclick="sendMessage()">Send</button>
