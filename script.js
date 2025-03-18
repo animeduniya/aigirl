@@ -15,10 +15,8 @@ function init3D() {
   scene.add(light);
 
   const loader = new THREE.GLTFLoader();
-  loader.load('https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/AnimatedMorphSphere/glTF/AnimatedMorphSphere.gltf', (gltf) => {
+  loader.load('https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf', (gltf) => {
     model = gltf.scene;
-    model.scale.set(1.5, 1.5, 1.5);
-    model.position.y = -1;
     scene.add(model);
     animate();
   });
@@ -37,36 +35,39 @@ const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognit
 recognition.lang = 'en-US';
 
 function startVoiceRecognition() {
-  document.getElementById("userSpeech").innerText = "Listening...";
   recognition.start();
 }
 
 recognition.onresult = function (event) {
   const question = event.results[0][0].transcript;
-  document.getElementById("userSpeech").innerText = `You: ${question}`;
-  fetchAnswer(question);
+  document.getElementById("userInput").value = question;
+  askLucy();
 };
 
-// Fetch Wikipedia Answer
-function fetchAnswer(question) {
-  const searchTerm = encodeURIComponent(question);
-  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`;
+// AI Logic with JSON-based Responses
+const responses = {
+  "hello": "Hi! How can I assist you today?",
+  "who are you": "I'm Lucy, created by Rishab.",
+  "how are you": "I'm just a virtual assistant, but I'm feeling great!",
+  "bye": "Goodbye! Have a great day!",
+  "creator": "I was created by Rishab, a talented developer!"
+};
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      const answer = data.extract || "I couldn't find the answer. Please try a different question.";
-      document.getElementById("response").innerText = `Lucy: ${answer}`;
-      speakAnswer(answer);
-    })
-    .catch(() => {
-      document.getElementById("response").innerText = "Lucy: I couldn't find an answer. Please try again.";
-      speakAnswer("I couldn't find an answer. Please try again.");
-    });
+function askLucy() {
+  const question = document.getElementById("userInput").value.toLowerCase();
+  const responseElement = document.getElementById("response");
+  
+  if (responses[question]) {
+    responseElement.innerText = `Lucy: ${responses[question]}`;
+    speak(responseElement.innerText);
+  } else {
+    responseElement.innerText = `Lucy: Sorry, I couldn't find an answer. Try a different question.`;
+    speak(responseElement.innerText);
+  }
 }
 
-// Text-to-Speech
-function speakAnswer(text) {
+// Voice Response
+function speak(text) {
   const synth = window.speechSynthesis;
   const utterance = new SpeechSynthesisUtterance(text);
   synth.speak(utterance);
